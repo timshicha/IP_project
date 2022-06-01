@@ -188,7 +188,7 @@ def send(sender_socket, message):
         elif(room_name not in client_info[client_socket][1]):
             to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: You are not in room '{room_name}'>\n"
             safe_send(sender_socket, to_send)
-        # otherwise broadbcast the message
+        # otherwise broadcast the message
         else:
             print("99")
             to_send = f"{OPCODE_SEND_MESSAGE}{sep}{message}"
@@ -270,7 +270,7 @@ def listen_for_client(sender_socket):
 
 
 
-# continuoslsy listen for new connections
+# continuously listen for new connections
 while True:
     client_socket, client_address = s.accept()
 

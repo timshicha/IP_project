@@ -71,12 +71,12 @@ print("[+] Connected.")
 
 # start thread that sends keep alive messages
 send_alive_thread = Thread(target=keepalive, args=(KEEP_ALIVE_INTERVAL,))
-send_alive_thread.deamon = True
+send_alive_thread.daemon = True
 send_alive_thread.start()
 
 # start thread that listens for messages
 listen_thread = Thread(target=listen_for_messages)
-listen_thread.deamon = True
+listen_thread.daemon = True
 listen_thread.start()
 
 

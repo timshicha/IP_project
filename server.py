@@ -284,7 +284,7 @@ while True:
     t = Thread(target=listen_for_client, args=(client_socket,))
 
     # end thread when main thread ends
-    t.deamon = True
+    t.daemon = True
     # start the thread
     t.start()
 

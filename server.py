@@ -24,15 +24,16 @@ OPCODE_SEND_MESSAGE = 8
 
 KEEP_ALIVE_INTERVAL = 5
 
-# disctionary of sockets with their corresponding usernames and rooms, also thread that's listening
+# disctionary of sockets with their corresponding usernames and rooms
 # key is socket name (ie, sender_socket.getsockname())
-# value is [username, list of rooms they're in, listen thread]
+# value is [username, list of rooms they're in]
 client_info = {}
 
 # dictionary of rooms with their corresponding members (as sockets)
 # key is room name
 # value is a list of sockets in the room
 room_info = {}
+
 
 # create reusable port and listen for connections
 s = socket.socket()

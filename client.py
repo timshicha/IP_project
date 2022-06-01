@@ -1,6 +1,7 @@
 
 # client
 
+from http import server
 from os import sep
 import socket
 import random
@@ -16,6 +17,8 @@ colors = colors = [Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.LIGHTBLACK_EX,
     Fore.LIGHTMAGENTA_EX, Fore.LIGHTRED_EX, Fore.LIGHTWHITE_EX, 
     Fore.LIGHTYELLOW_EX, Fore.MAGENTA, Fore.RED, Fore.WHITE, Fore.YELLOW
 ]
+
+server_alive = True
 
 # server's IP address and port
 SERVER_HOST = "127.0.0.1"
@@ -47,25 +50,32 @@ s = socket.socket()
 
 # listen for messages from server
 def listen_for_messages():
-
+    global server_alive
     # continously listen for messages
-    while True:
-        data = s.recv(1024).decode().split(sep)
-        # element 1 holds message
-        msg = data[1]
-        print(msg)
+    while server_alive:
+        data = s.recv(1024).decode()
+
+        # server sends blanks when disconnected
+        if(data == None or data == ""):
+            server_alive = False
+        else:
+            data = data.split(sep)
+            # otherwise element 1 holds message
+            msg = data[1]
+            print(msg)
 
 
 # send a keep alive message
 def keepalive(period):
-    pass
+    while server_alive == True:
+        to_send = f"{OPCODE_KEEP_ALIVE}{sep}none"
+        s.send(to_send.encode())
+        time.sleep(period) 
 
 
 # create TCP socket
 print(f"Connecting to {SERVER_HOST}:{SERVER_PORT}...")
-print("h")
 s.connect((SERVER_HOST, SERVER_PORT))
-print("i")
 print("[+] Connected.")
 
 
@@ -91,12 +101,12 @@ def create_room(msg):
 
 # list all the rooms
 def list_rooms(msg):
-    to_send = f"{OPCODE_LIST_ROOMS}{sep}{' '}"
+    to_send = f"{OPCODE_LIST_ROOMS}{sep}none"
     s.send(to_send.encode())
 
 # list all the rooms the client is in
 def list_my_rooms(msg):
-    to_send = f"{OPCODE_LIST_MY_ROOMS}{sep}{' '}"
+    to_send = f"{OPCODE_LIST_MY_ROOMS}{sep}none"
     s.send(to_send.encode())
 
 # join a room
@@ -137,10 +147,15 @@ def send(msg):
 
 
 # keep waiting for user input
-while True:
+while server_alive == True:
 
     # read a message
     msg = input()
+
+    # if server went down while the client entered their input
+    if(server_alive == False):
+        continue
+
     if(msg == None or len(msg) == 0):
         continue
 
@@ -176,6 +191,7 @@ while True:
         print("Command not recognized!\n")
 
 
-
+# once the loop exists, we know the server disconnected
+print("<The server disconnected>")
 # close the socket
 s.close()

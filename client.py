@@ -94,7 +94,7 @@ listen_thread.start()
 def create_room(msg):
     msg = msg.split(" ", 2) # ['create', 'room', room_name]
     if(len(msg) < 3):
-        print("\n<Error: Wrong format>\n")
+        print("\n<Error: Wrong format> Usage: create room room_name\n")
     else:
         to_send = f"{OPCODE_CREATE_ROOM}{sep}{msg[2]}"
         s.send(to_send.encode())

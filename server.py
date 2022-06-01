@@ -111,7 +111,7 @@ def list_my_rooms(sender_socket):
             to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<You are not in any rooms>\n"
         # otherwise list the rooms
         else:
-            rooms = "\nHere are the room you are in:\n"
+            rooms = "\nHere are the room(s) you are in:\n"
             for i in client_info[sender_socket][1]:
                 rooms += ('-' + i + '\n')
             to_send = f"{OPCODE_SEND_MESSAGE}{sep}{rooms}"
@@ -177,7 +177,8 @@ def send(sender_socket, message):
     message = message.split(' ', 1)
     # need at least room name and message
     if(len(message) < 2):
-        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Invalid send message format>\n"
+        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Invalid send message format>\
+ Usage: send room_name your_message_here\n"
         safe_send(sender_socket, to_send)
     else:
         room_name, message = message

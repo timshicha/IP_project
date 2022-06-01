@@ -113,7 +113,7 @@ def list_my_rooms(msg):
 def join_room(msg):
     msg = msg.split(" ", 2) # ['join', 'room', room_name]
     if(len(msg) < 3):
-        print("\n<Wrong format>\n")
+        print("\n<Error: Wrong format> Usage: join room room_name\n")
     else:
         to_send = f"{OPCODE_JOIN_ROOM}{sep}{msg[2]}"
         s.send(to_send.encode())
@@ -122,7 +122,7 @@ def join_room(msg):
 def list_members(msg):
     msg = msg.split(" ", 2) # ['list', 'members', room_name]
     if(len(msg) < 3):
-        print("\n<Error: Wrong format>\n")
+        print("\n<Error: Wrong format> Usage: list members room_name\n")
     else:
         to_send = f"{OPCODE_LIST_MEMBERS_ROOM}{sep}{msg[2]}"
         s.send(to_send.encode())
@@ -131,7 +131,7 @@ def list_members(msg):
 def leave_room(msg):
     msg = msg.split(" ", 2) # ['leave', 'room', room_name]
     if(len(msg) < 3):
-        print("\n<Error: Wrong format\n")
+        print("\n<Error: Wrong format> Usage: leave room room_name\n")
     else:
         to_send = f"{OPCODE_LEAVE_ROOM}{sep}{msg[2]}"
         s.send(to_send.encode())
@@ -140,7 +140,7 @@ def leave_room(msg):
 def send(msg):
     msg = msg.split(" ", 1) # ['send', room_name + message]
     if(len(msg) < 2):
-        print("\n<Error: Wrong format>\n")
+        print("\n<Error: Wrong format> Usage: send room_name your_message_here\n")
     else:
         to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg[1]}"
         s.send(to_send.encode())

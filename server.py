@@ -163,7 +163,7 @@ def join_rooms(sender_socket, room_names):
                     room_info[room_name].append(sender_socket)
                     # add room to client
                     client_info[sender_socket][1].append(room_name)
-                    msg += f"<You joined room '{room_name}'\n"
+                    msg += f"<You joined room '{room_name}'>\n"
     # send the response message
     to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg}"
     safe_send(sender_socket, to_send)

@@ -278,7 +278,7 @@ def sendm(sender_socket, message):
                 continue
             else:
                 to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Bad format>\n"
-                safe_send(client_socket, to_send)
+                safe_send(sender_socket, to_send)
                 return
         
         # if we're already reading names
@@ -301,11 +301,11 @@ def sendm(sender_socket, message):
         # if some other character, it's illegal
         else:
             to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Invalid character detected>\n"
-            safe_send(client_socket, to_send)
+            safe_send(sender_socket, to_send)
             return
     if(close_paren == False):
         to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Bad format, no ')' was detected>\n"
-        safe_send(client_socket, to_send)
+        safe_send(sender_socket, to_send)
         return
 
     # otherwise, send the message to each of the rooms
@@ -330,7 +330,7 @@ def sendm(sender_socket, message):
             continue
         # otherwise broadcast the message
         else:
-            to_send = f"{OPCODE_SEND_MESSAGE}{sep}{message}"
+            to_send = f"{OPCODE_SEND_MESSAGE}{sep}[user={client_info[sender_socket][0]} room={room_name} time={message}"
             # send to each user in room
             for i in room_info[room_name]:
                 safe_send(i, to_send)

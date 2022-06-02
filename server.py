@@ -414,27 +414,38 @@ def listen_for_client(sender_socket):
 
 
 
-
 # continuously listen for new connections
-while True:
-    client_socket, client_address = s.accept()
+def listen_for_new_clients():
+    while True:
+        client_socket, client_address = s.accept()
 
-    print(f"[+] {client_address} connected.")
+        print(f"[+] {client_address} connected.")
 
-    # add the new client's socket to list of connected clients
-    # no name, empty list (since in no rooms)
-    client_info[client_socket] = ["Unnamed user", []]
+        # add the new client's socket to list of connected clients
+        # no name, empty list (since in no rooms)
+        client_info[client_socket] = ["Unnamed user", []]
 
-    # start a thread that listens for the client's messages
-    t = Thread(target=listen_for_client, args=(client_socket,))
+        # start a thread that listens for the client's messages
+        t = Thread(target=listen_for_client, args=(client_socket,))
 
-    # end thread when main thread ends
-    t.daemon = True
-    # start the thread
-    t.start()
+        # end thread when main thread ends
+        t.daemon = True
+        # start the thread
+        t.start()
+
+t_new_clients = Thread(target=listen_for_new_clients,)
+t_new_clients.daemon = True
+t_new_clients.start()
+
+running = True
+while running:
+    msg = input()
+    if(msg == 'quit'):
+        print("Quitting")
+        running = False
 
 
 # when done, close the sockets
-for i in client_info:
-    i.close()
-s.close()
+#for i in client_info:
+ #   i.close()
+#s.close()

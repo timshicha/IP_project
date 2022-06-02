@@ -232,7 +232,7 @@ while server_alive == True:
     elif(msg.startswith("join rooms ")):
         join_rooms(msg)
     # set username
-    elif(msg.startswith("nick")):
+    elif(msg.startswith("username ")):
         set_username(msg)
 
     # send to multiple rooms

@@ -74,13 +74,30 @@ def keep_alive(sender_socket):
     pass
 
 def set_username(sender_socket, username):
+    # make sure username is alphanumeric and unique
+    if(username.isalnum() == False):
+        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Username number be alphanumeric>\n"
+        safe_send(sender_socket, to_send)
+        return
+    # make sure it's a unique username
+    for i in client_info:
+        if(client_info[i][0] == username):
+            to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: There is already a user with this username>\n"
+            safe_send(sender_socket, to_send)
+            return
+    # otherwise, update the user's name
     client_info[sender_socket][0] = username
+    to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<Username was updated to '{username}'>\n"
+    safe_send(sender_socket, to_send)
 
 # to create a room
 def create_room(sender_socket, room_name):
     to_send = ""
+    # make sure room name is alphanumeric
+    if(room_name.isalnum() == False):
+        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Illegal room name>\n"
     # if the room name already exists
-    if(room_name in room_info):
+    elif(room_name in room_info):
         to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: a room with name '{room_name}' already exists>\n"
     else:
         # create the room

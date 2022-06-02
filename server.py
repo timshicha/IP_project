@@ -21,6 +21,7 @@ OPCODE_JOIN_ROOM = 5
 OPCODE_LIST_MEMBERS_ROOM = 6
 OPCODE_LEAVE_ROOM = 7
 OPCODE_SEND_MESSAGE = 8
+OPCODE_JOIN_ROOMS = 9
 
 KEEP_ALIVE_INTERVAL = 5
 
@@ -78,7 +79,7 @@ def create_room(sender_socket, room_name):
     to_send = ""
     # if the room name already exists
     if(room_name in room_info):
-        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: a room with this name already exists>\n"
+        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: a room with name '{room_name}' already exists>\n"
     else:
         # create the room
         room_info[room_name] = [sender_socket] # add client to the room
@@ -125,10 +126,10 @@ def join_room(sender_socket, room_name):
     else:
         # check that the room exists
         if(room_name not in room_info):
-            to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: This room doesn't exist>\n"
+            to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Room '{room_name}' doesn't exist>\n"
         # check that the user isn't already in the room
         elif(sender_socket in room_info[room_name]):
-            to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: You are already in this room>\n"
+            to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: You are already in room '{room_name}'>\n"
         # otherwise add them
         else:
             # add client to room
@@ -138,14 +139,44 @@ def join_room(sender_socket, room_name):
             to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<You joined room '{room_name}'\n"
     safe_send(sender_socket, to_send)
 
+def join_rooms(sender_socket, room_names):
+    msg = ""
+    if(sender_socket not in client_info):
+        msg = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Client not listed>\n"
+    else:
+        # split room into list
+        room_names = room_names.split()
+        if(len(room_names) == 0):
+            msg = f"\nError: Specify a list of rooms>\n"
+        else:
+            # for each room
+            for room_name in room_names:
+                # check that the room exists
+                if(room_name not in room_info):
+                    msg += f"<Error: Room '{room_name}' doesn't exist>\n"
+                # check that the user isn't already in the room
+                elif(sender_socket in room_info[room_name]):
+                    msg += f"<Error: You are already in room '{room_name}'>\n"
+                # otherwise add them
+                else:
+                    # add client to room
+                    room_info[room_name].append(sender_socket)
+                    # add room to client
+                    client_info[sender_socket][1].append(room_name)
+                    msg += f"<You joined room '{room_name}'\n"
+    # send the response message
+    to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg}"
+    safe_send(sender_socket, to_send)
+
+
 def list_members(sender_socket, room_name):
     to_send = ""
     # check that the room name exists
     if(room_name not in room_info):
-        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: This room doesn't exist>\n"
+        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Room '{room_name}' doesn't exist>\n"
     # list the members
     else:
-        members = f"\nHere are the members in this room:\n"
+        members = f"\nHere are the members in room '{room_name}':\n"
         for i in room_info[room_name]:
             client_name = client_info[i][0]
             members += ('-' + client_name + '\n')
@@ -159,7 +190,7 @@ def leave_room(sender_socket, room_name):
         to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Client not listed>\n"
     # check that the room is one of client's current rooms
     elif(room_name not in client_info[sender_socket][1]):
-        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: You are not in this room>\n"
+        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: You are not in room '{room_name}'>\n"
     # otherwise remove the client
     else:
         # remove room from client
@@ -169,7 +200,7 @@ def leave_room(sender_socket, room_name):
         # if there is no one in that room now, delete room
         if(len(room_info[room_name]) == 0):
             del room_info[room_name]
-        to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<You left the room>\n"
+        to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<You left room '{room_name}'>\n"
     safe_send(sender_socket, to_send)
 
 def send(sender_socket, message):
@@ -263,11 +294,13 @@ def listen_for_client(sender_socket):
 
                 # leave a room
                 elif(opcode == OPCODE_LEAVE_ROOM):
-                    print("leaving")
                     leave_room(sender_socket, message)
 
                 elif(opcode == OPCODE_SEND_MESSAGE):
                     send(sender_socket, message)
+
+                elif(opcode == OPCODE_JOIN_ROOMS):
+                    join_rooms(sender_socket, message)
 
 
 

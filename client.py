@@ -10,6 +10,8 @@ from threading import Thread
 from datetime import datetime
 from colorama import Fore, init, Back
 
+
+
 init()
 # user colors
 colors = colors = [Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.LIGHTBLACK_EX, 
@@ -38,6 +40,7 @@ OPCODE_JOIN_ROOM = 5
 OPCODE_LIST_MEMBERS_ROOM = 6
 OPCODE_LEAVE_ROOM = 7
 OPCODE_SEND_MESSAGE = 8
+OPCODE_JOIN_ROOMS = 9
 
 KEEP_ALIVE_INTERVAL = 5
 
@@ -118,6 +121,15 @@ def join_room(msg):
         to_send = f"{OPCODE_JOIN_ROOM}{sep}{msg[2]}"
         s.send(to_send.encode())
 
+# join rooms
+def join_rooms(msg):
+    msg = msg.split(" ", 2)
+    if(len(msg) < 3):
+        print("\n<Error: Wrong format> Usage: join room room_name1 room_name2 ...\n")
+    else:
+        to_send = f"{OPCODE_JOIN_ROOMS}{sep}{msg[2]}"
+        s.send(to_send.encode())
+
 # list members in a room
 def list_members(msg):
     msg = msg.split(" ", 2) # ['list', 'members', room_name]
@@ -160,7 +172,7 @@ while server_alive == True:
         continue
 
     # create a room
-    if(msg.startswith("create room")):
+    if(msg.startswith("create room ")):
         create_room(msg)
 
     # list rooms
@@ -172,20 +184,24 @@ while server_alive == True:
         list_my_rooms(msg)
 
     # join a room
-    elif(msg.startswith("join room")):
+    elif(msg.startswith("join room ")):
         join_room(msg)
 
     # list members in group
-    elif(msg.startswith("list members")):
+    elif(msg.startswith("list members ")):
         list_members(msg)
 
     # leave room
-    elif(msg.startswith("leave room")):
+    elif(msg.startswith("leave room ")):
         leave_room(msg)
 
     # send a message
-    elif(msg.startswith("send")):
+    elif(msg.startswith("send ")):
         send(msg)
+
+    # join multiple rooms
+    elif(msg.startswith("join rooms ")):
+        join_rooms(msg)
 
     else:
         print("Command not recognized!\n")

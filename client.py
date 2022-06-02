@@ -1,7 +1,6 @@
 
 # client
 
-from curses.ascii import isalnum
 from http import server
 from os import sep
 import socket
@@ -49,9 +48,25 @@ KEEP_ALIVE_INTERVAL = 5
 
 mycolor = random.choice(colors)
 
+
 # create socket
 s = socket.socket()
 
+def get_time():
+    return datetime.now().strftime("%H:%M:%S")
+
+    
+def show_uses():
+    print("\nWelcome to the chat room app!\n")
+    print("\tTo set/update your username: username <username>")
+    print("\tTo join a room: join room <room name>")
+    print("\tTo list rooms: list rooms")
+    print("\tTo create room: create room<room name>")
+    print("\tTo leave room: leave <room name>")
+    print("\tTo list members in a room: list members <room name>")
+    print("\tTo list the current rooms you are in: list my rooms")
+    print("\tTo send messages to a single room: send <room name> <message>")
+    print("\tTo send messages to multiple rooms: send <room names> <message>")
 
 
 # listen for messages from server
@@ -101,6 +116,7 @@ send_alive_thread.start()
 listen_thread = Thread(target=listen_for_messages)
 listen_thread.daemon = True
 listen_thread.start()
+show_uses() 
 
 
 # The functions below are selected based on what the user commanded
@@ -164,7 +180,7 @@ def send(msg):
     if(len(msg) < 3):
         print("\n<Error: Wrong format> Usage: send room_name your_message_here\n")
     else:
-        to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg[1]}{' '}{mycolor}{msg[2]}{Fore.RESET}"
+        to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg[1]}{' '}{get_time()}] {mycolor}{msg[2]}{Fore.RESET}"
         s.send(to_send.encode())
 
 # send a message to multiple rooms
@@ -174,7 +190,7 @@ def sendm(msg):
         print("\n<Error: Wrong format> Usage: sendm (room_name1, room_name2, ...) your_message_here\n")
     else:
         colorized = msg[1].split(")", 1)
-        colorized = f"{colorized[0]}{')'}{mycolor}{colorized[1]}{Fore.RESET}"
+        colorized = f"{colorized[0]}{')'}{get_time()}] {mycolor}{colorized[1]}{Fore.RESET}"
         to_send = f"{OPCODE_SEND_MESSAGES}{sep}{colorized}"
         s.send(to_send.encode())
 
@@ -183,7 +199,7 @@ def sendm(msg):
 def set_username(msg):
     msg = msg.split(" ", 1) # ['nick', new_username]
     if(len(msg) < 2):
-        print("\n<Error: Wrong format> Usage: nick new_name\n")
+        print("\n<Error: Wrong format> Usage: username new_name\n")
     else:
         to_send = f"{OPCODE_SET_USERNAME}{sep}{msg[1]}"
         s.send(to_send.encode())

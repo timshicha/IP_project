@@ -156,6 +156,11 @@ def join_room(sender_socket, room_name):
             # add room to client
             client_info[sender_socket][1].append(room_name)
             to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<You joined room '{room_name}'>\n"
+
+            # send message to each client in the room
+            room_msg = f"{OPCODE_SEND_MESSAGE}{sep}\n<'{client_info[sender_socket][0]}' has joined room '{room_name}'>\n"
+            for i in room_info[room_name]:
+                safe_send(i, room_msg)
     safe_send(sender_socket, to_send)
 
 def join_rooms(sender_socket, room_names):
@@ -183,6 +188,11 @@ def join_rooms(sender_socket, room_names):
                     # add room to client
                     client_info[sender_socket][1].append(room_name)
                     msg += f"<You joined room '{room_name}'>\n"
+
+                    # send message to each client in the room
+                    to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<'{client_info[sender_socket][0]}' has joined room '{room_name}'>\n"
+                    for i in room_info[room_name]:
+                        safe_send(i, to_send)
     # send the response message
     to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg}"
     safe_send(sender_socket, to_send)
@@ -246,7 +256,7 @@ def send(sender_socket, message):
             safe_send(sender_socket, to_send)
         # otherwise broadcast the message
         else:
-            to_send = f"{OPCODE_SEND_MESSAGE}{sep}{message}"
+            to_send = f"{OPCODE_SEND_MESSAGE}{sep}[user={client_info[sender_socket][0]} room={room_name} time={message}"
             for i in room_info[room_name]:
                 safe_send(i, to_send)
 
@@ -428,10 +438,16 @@ def listen_for_new_clients():
         # start a thread that listens for the client's messages
         t = Thread(target=listen_for_client, args=(client_socket,))
 
+<<<<<<< HEAD
         # end thread when main thread ends
         t.daemon = True
         # start the thread
         t.start()
+=======
+    # add the new client's socket to list of connected clients
+    # no name, empty list (since in no rooms)
+    client_info[client_socket] = ["unnamed", []]
+>>>>>>> f29a7f00e96f4df09567fa1d71e7aaea4a28a9c4
 
 t_new_clients = Thread(target=listen_for_new_clients,)
 t_new_clients.daemon = True

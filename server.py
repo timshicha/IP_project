@@ -2,6 +2,9 @@
 # Rajat Kulkarni
 # Marten Sova
 
+# The starter code used for both the server.py and client.py can be found here:
+# https://www.thepythoncode.com/article/make-a-chat-room-application-in-python
+
 # CS 494P/595P project (Spring 2022)
 #
 # CHAT ROOM APP

@@ -9,6 +9,7 @@ SERVER_PORT = 5002
 
 # use sep to separate opcode and message
 sep = "<SEP>"
+end = "<END_TOKEN>"
 
 # opcodes
 OPCODE_ERROR_MESSAGE = -1
@@ -66,7 +67,7 @@ def disconnect_client(client_socket):
 
 # safely send a packet (check that socket is connected)
 def safe_send(socket_name, message):
-    socket_name.send(message.encode())
+    socket_name.send((message+end).encode())
 
 # Call one of the functions below based on user message's opcode
 def keep_alive(sender_socket):

@@ -29,6 +29,7 @@ SERVER_PORT = 5002
 
 # use sep to separate opcode and message
 sep = "<SEP>"
+end = "<END_TOKEN>"
 
 # opcodes
 OPCODE_ERROR_MESSAGE = -1
@@ -64,10 +65,17 @@ def listen_for_messages():
         if(data == None or data == ""):
             server_alive = False
         else:
-            data = data.split(sep)
-            # otherwise element 1 holds message
-            msg = data[1]
-            print(msg)
+            remaining_data = ""
+            while(data != ""):
+                data = data.split(end, 1)
+                if(len(data) > 1):
+                    remaining_data = data[1]
+                    data = data[0]
+                # otherwise element 1 holds message
+                data = data.split(sep)
+                if(len(data) > 1):
+                    print(data[1])
+                data = remaining_data
 
 
 # send a keep alive message

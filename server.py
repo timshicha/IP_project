@@ -1,3 +1,15 @@
+# Timofey Shichalin
+# Rajat Kulkarni
+# Marten Sova
+
+# CS 494P/595P project (Spring 2022)
+#
+# CHAT ROOM APP
+#
+# This is the server side of the application.
+# It allows clients to do certain actions like join rooms,
+# send messages, and leave rooms.
+
 
 import socket
 from threading import Thread
@@ -456,7 +468,4 @@ while running:
         running = False
 
 
-# when done, close the sockets
-#for i in client_info:
- #   i.close()
-#s.close()
+s.close()

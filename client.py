@@ -1,5 +1,14 @@
+# Timofey Shichalin
+# Rajat Kulkarni
+# Marten Sova
 
-# client
+# CS 494P/595P project (Spring 2022)
+#
+# CHAT ROOM APP
+#
+# This is the client side of the application.
+# The client make requests like to join rooms,
+# send messages to rooms, and leave rooms.
 
 from http import server
 from os import sep
@@ -9,7 +18,6 @@ import time
 from threading import Thread
 from datetime import datetime
 from colorama import Fore, init, Back
-
 
 
 init()
@@ -265,7 +273,6 @@ while (server_alive == True) and (running == True):
         print("Command not recognized!\n")
 
 
-# once the loop exists, we know the server disconnected
 if server_alive == False:
     print("<The server disconnected>")
 else:

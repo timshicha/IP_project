@@ -175,9 +175,7 @@ def sendm(msg):
     else:
         colorized = msg[1].split(")", 1)
         colorized = f"{colorized[0]}{')'}{mycolor}{colorized[1]}{Fore.RESET}"
-        #print(colorized)
         to_send = f"{OPCODE_SEND_MESSAGES}{sep}{colorized}"
-
         s.send(to_send.encode())
 
 

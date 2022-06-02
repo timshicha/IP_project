@@ -156,6 +156,11 @@ def join_room(sender_socket, room_name):
             # add room to client
             client_info[sender_socket][1].append(room_name)
             to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<You joined room '{room_name}'>\n"
+
+            # send message to each client in the room
+            room_msg = f"{OPCODE_SEND_MESSAGE}{sep}\n<'{client_info[sender_socket][0]}' has joined room '{room_name}'>\n"
+            for i in room_info[room_name]:
+                safe_send(i, room_msg)
     safe_send(sender_socket, to_send)
 
 def join_rooms(sender_socket, room_names):
@@ -183,6 +188,11 @@ def join_rooms(sender_socket, room_names):
                     # add room to client
                     client_info[sender_socket][1].append(room_name)
                     msg += f"<You joined room '{room_name}'>\n"
+
+                    # send message to each client in the room
+                    to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<'{client_info[sender_socket][0]}' has joined room '{room_name}'>\n"
+                    for i in room_info[room_name]:
+                        safe_send(i, to_send)
     # send the response message
     to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg}"
     safe_send(sender_socket, to_send)

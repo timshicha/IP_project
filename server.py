@@ -73,7 +73,7 @@ def keep_alive(sender_socket):
     pass
 
 def set_username(sender_socket, username):
-    pass
+    client_info[sender_socket][0] = username
 
 # to create a room
 def create_room(sender_socket, room_name):
@@ -387,6 +387,8 @@ def listen_for_client(sender_socket):
 
                 elif(opcode == OPCODE_SEND_MESSAGES):
                     sendm(sender_socket, message)
+                elif(opcode == OPCODE_SET_USERNAME):
+                    set_username(sender_socket, message)
 
 
 

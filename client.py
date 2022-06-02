@@ -15,7 +15,7 @@ from colorama import Fore, init, Back
 
 init()
 # user colors
-colors = colors = [Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.LIGHTBLACK_EX, 
+colors = [Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.LIGHTBLACK_EX, 
     Fore.LIGHTBLUE_EX, Fore.LIGHTCYAN_EX, Fore.LIGHTGREEN_EX, 
     Fore.LIGHTMAGENTA_EX, Fore.LIGHTRED_EX, Fore.LIGHTWHITE_EX, 
     Fore.LIGHTYELLOW_EX, Fore.MAGENTA, Fore.RED, Fore.WHITE, Fore.YELLOW
@@ -152,11 +152,11 @@ def leave_room(msg):
 
 # send a message to the room
 def send(msg):
-    msg = msg.split(" ", 1) # ['send', room_name + message]
-    if(len(msg) < 2):
+    msg = msg.split(" ", 2) # ['send', room_name, message]
+    if(len(msg) < 3):
         print("\n<Error: Wrong format> Usage: send room_name your_message_here\n")
     else:
-        to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg[1]}"
+        to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg[1]}{' '}{mycolor}{msg[2]}{Fore.RESET}"
         s.send(to_send.encode())
 
 # send a message to multiple rooms

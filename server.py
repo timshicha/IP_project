@@ -348,7 +348,7 @@ def listen_for_client(sender_socket):
             # disconnected clients' sockets send blank messages
             if(data == "" or data == None):
                 # disconnect user
-                disconnect_client(client_socket)
+                disconnect_client(sender_socket)
                 # stop listening
                 break
             # if it's a legit message from the client

@@ -206,7 +206,8 @@ def set_username(msg):
 
 
 # keep waiting for user input
-while server_alive == True:
+running = True
+while (server_alive == True) and (running == True):
 
     # read a message
     msg = input()
@@ -257,11 +258,17 @@ while server_alive == True:
     elif(msg.startswith("sendm ")):
         sendm(msg)
 
+    elif(msg == "quit"):
+        running = False
+
     else:
         print("Command not recognized!\n")
 
 
 # once the loop exists, we know the server disconnected
-print("<The server disconnected>")
+if server_alive == False:
+    print("<The server disconnected>")
+else:
+    print("Quitting")
 # close the socket
 s.close()

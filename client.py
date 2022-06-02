@@ -55,6 +55,20 @@ s = socket.socket()
 def get_time():
     return datetime.now().strftime("%H:%M:%S")
 
+    
+def show_uses():
+    print("\nWelcome to the chat room app!\n")
+    print("\tTo set/update your username: username <username>")
+    print("\tTo join a room: join room <room name>")
+    print("\tTo list rooms: list rooms")
+    print("\tTo create room: create room<room name>")
+    print("\tTo leave room: leave <room name>")
+    print("\tTo list members in a room: list members <room name>")
+    print("\tTo list the current rooms you are in: list my rooms")
+    print("\tTo send messages to a single room: send <room name> <message>")
+    print("\tTo send messages to multiple rooms: send <room names> <message>")
+
+
 # listen for messages from server
 def listen_for_messages():
     global server_alive
@@ -102,6 +116,7 @@ send_alive_thread.start()
 listen_thread = Thread(target=listen_for_messages)
 listen_thread.daemon = True
 listen_thread.start()
+show_uses() 
 
 
 # The functions below are selected based on what the user commanded

@@ -145,6 +145,16 @@ def send(msg):
         to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg[1]}"
         s.send(to_send.encode())
 
+# change your username
+def set_username(msg):
+    msg = msg.split(" ", 1) # ['nick', new_username]
+    if(len(msg) < 1):
+        print("\n<Error: Wrong format> Usage: nick new_name\n")
+    else:
+        to_send = f"{OPCODE_SET_USERNAME}{sep}{msg[1]}"
+        s.send(to_send.encode())
+        print(to_send)
+
 
 # keep waiting for user input
 while server_alive == True:

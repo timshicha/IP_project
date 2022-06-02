@@ -438,16 +438,14 @@ def listen_for_new_clients():
         # start a thread that listens for the client's messages
         t = Thread(target=listen_for_client, args=(client_socket,))
 
-<<<<<<< HEAD
         # end thread when main thread ends
         t.daemon = True
         # start the thread
         t.start()
-=======
+
     # add the new client's socket to list of connected clients
     # no name, empty list (since in no rooms)
     client_info[client_socket] = ["unnamed", []]
->>>>>>> f29a7f00e96f4df09567fa1d71e7aaea4a28a9c4
 
 t_new_clients = Thread(target=listen_for_new_clients,)
 t_new_clients.daemon = True

@@ -155,7 +155,7 @@ def join_room(sender_socket, room_name):
             room_info[room_name].append(sender_socket)
             # add room to client
             client_info[sender_socket][1].append(room_name)
-            to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<You joined room '{room_name}'\n"
+            to_send = f"{OPCODE_SEND_MESSAGE}{sep}\n<You joined room '{room_name}'>\n"
     safe_send(sender_socket, to_send)
 
 def join_rooms(sender_socket, room_names):
@@ -212,6 +212,10 @@ def leave_room(sender_socket, room_name):
         to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: You are not in room '{room_name}'>\n"
     # otherwise remove the client
     else:
+        leave_msg = f"{OPCODE_SEND_MESSAGE}{sep}\n<'{client_info[client_socket][0]}' has left room '{room_name}'>\n"
+        # send message to each client in the room
+        for i in room_info[room_name]:
+            safe_send(i, leave_msg)
         # remove room from client
         client_info[sender_socket][1].remove(room_name)
         # remove client from room

@@ -222,7 +222,7 @@ def leave_room(sender_socket, room_name):
         to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: You are not in room '{room_name}'>\n"
     # otherwise remove the client
     else:
-        leave_msg = f"{OPCODE_SEND_MESSAGE}{sep}\n<'{client_info[client_socket][0]}' has left room '{room_name}'>\n"
+        leave_msg = f"{OPCODE_SEND_MESSAGE}{sep}\n<'{client_info[sender_socket][0]}' has left room '{room_name}'>\n"
         # send message to each client in the room
         for i in room_info[room_name]:
             safe_send(i, leave_msg)
@@ -251,7 +251,7 @@ def send(sender_socket, message):
             to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Client not listed>\n"
             safe_send(sender_socket, to_send)
         # check that the room is listed for the client
-        elif(room_name not in client_info[client_socket][1]):
+        elif(room_name not in client_info[sender_socket][1]):
             to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: You are not in room '{room_name}'>\n"
             safe_send(sender_socket, to_send)
         # otherwise broadcast the message

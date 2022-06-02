@@ -173,7 +173,11 @@ def sendm(msg):
     if(len(msg) < 2):
         print("\n<Error: Wrong format> Usage: sendm (room_name1, room_name2, ...) your_message_here\n")
     else:
-        to_send = f"{OPCODE_SEND_MESSAGES}{sep}{msg[1]}"
+        colorized = msg[1].split(")", 1)
+        colorized = f"{colorized[0]}{')'}{mycolor}{colorized[1]}{Fore.RESET}"
+        #print(colorized)
+        to_send = f"{OPCODE_SEND_MESSAGES}{sep}{colorized}"
+
         s.send(to_send.encode())
 
 

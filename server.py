@@ -22,6 +22,7 @@ OPCODE_LIST_MEMBERS_ROOM = 6
 OPCODE_LEAVE_ROOM = 7
 OPCODE_SEND_MESSAGE = 8
 OPCODE_JOIN_ROOMS = 9
+OPCODE_SEND_MESSAGES = 10
 
 KEEP_ALIVE_INTERVAL = 5
 
@@ -223,12 +224,94 @@ def send(sender_socket, message):
             safe_send(sender_socket, to_send)
         # otherwise broadcast the message
         else:
-            print("99")
             to_send = f"{OPCODE_SEND_MESSAGE}{sep}{message}"
             for i in room_info[room_name]:
-                print("sending")
                 safe_send(i, to_send)
+
+
+
+# send a message to multiple rooms
+def sendm(sender_socket, message):
+    room_list = []
+    current_room = ""
+    open_paren = False
+    close_paren = False
+    for i in message:
+        # if we haven't seen first '('
+        if(open_paren == False):
+            if(i == ' '): # keep searching, space is ok
+                continue
+            if(i == '('): # start reading room names
+                open_paren = True
+                continue
+            else:
+                to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Bad format>\n"
+                safe_send(client_socket, to_send)
+                return
+        
+        # if we're already reading names
+        if(i == ')'):
+            # stop reading names
+            if(current_room != ""): # if we were reading a name
+                room_list.append(current_room)
+            current_room = ""
+            close_paren = True
+            break
+        # if waiting for new word
+        elif(i == ' '):
+            if(current_room != ""): # if we were reading a name
+                room_list.append(current_room)
+                current_room = ""
+        # if an alphanumeral
+        elif(i.isalnum()):
+            # append to the current room name
+            current_room += i
+        # if some other character, it's illegal
+        else:
+            to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Invalid character detected>\n"
+            safe_send(client_socket, to_send)
+            return
+    if(close_paren == False):
+        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Bad format, no ')' was detected>\n"
+        safe_send(client_socket, to_send)
+        return
+
+    # otherwise, send the message to each of the rooms
+    # whatever comes after ')' is the message
+    message = message.split(')')
+    if(len(message) < 2):
+        message.append(' ')
+    message = message[1] # message to send
+
+    # make sure client exists
+    if(sender_socket not in client_info):
+        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}\n<Error: Client not listed>\n"
+        safe_send(sender_socket, to_send)
+        return
+
+    errors = ""
+    # for each room
+    for room_name in room_list:
+        # check that the room is listed under the user
+        if(room_name not in client_info[sender_socket][1]):
+            errors += f"<Error: You are not in room '{room_name}'>\n"
+            continue
+        # otherwise broadcast the message
+        else:
+            to_send = f"{OPCODE_SEND_MESSAGE}{sep}{message}"
+            # send to each user in room
+            for i in room_info[room_name]:
+                safe_send(i, to_send)
+    
+    # if we racked up any errors, send them to the client
+    if(errors != ""):
+        to_send = f"{OPCODE_ERROR_MESSAGE}{sep}{errors}"
+        safe_send(sender_socket, to_send)
+
             
+
+
+
 
 # listens for client messages
 def listen_for_client(sender_socket):
@@ -301,6 +384,9 @@ def listen_for_client(sender_socket):
 
                 elif(opcode == OPCODE_JOIN_ROOMS):
                     join_rooms(sender_socket, message)
+
+                elif(opcode == OPCODE_SEND_MESSAGES):
+                    sendm(sender_socket, message)
 
 
 

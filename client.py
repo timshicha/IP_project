@@ -1,6 +1,7 @@
 
 # client
 
+from curses.ascii import isalnum
 from http import server
 from os import sep
 import socket
@@ -41,6 +42,7 @@ OPCODE_LIST_MEMBERS_ROOM = 6
 OPCODE_LEAVE_ROOM = 7
 OPCODE_SEND_MESSAGE = 8
 OPCODE_JOIN_ROOMS = 9
+OPCODE_SEND_MESSAGES = 10
 
 KEEP_ALIVE_INTERVAL = 5
 
@@ -157,6 +159,16 @@ def send(msg):
         to_send = f"{OPCODE_SEND_MESSAGE}{sep}{msg[1]}"
         s.send(to_send.encode())
 
+# send a message to multiple rooms
+def sendm(msg):
+    msg = msg.split(" ", 1)
+    if(len(msg) < 2):
+        print("\n<Error: Wrong format> Usage: sendm (room_name1, room_name2, ...) your_message_here\n")
+    else:
+        to_send = f"{OPCODE_SEND_MESSAGES}{sep}{msg[1]}"
+        s.send(to_send.encode())
+
+
 # change your username
 def set_username(msg):
     msg = msg.split(" ", 1) # ['nick', new_username]
@@ -214,6 +226,10 @@ while server_alive == True:
     # set username
     elif(msg.startswith("nick")):
         set_username(msg)
+
+    # send to multiple rooms
+    elif(msg.startswith("sendm ")):
+        sendm(msg)
 
     else:
         print("Command not recognized!\n")

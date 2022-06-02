@@ -433,7 +433,7 @@ def listen_for_new_clients():
 
         # add the new client's socket to list of connected clients
         # no name, empty list (since in no rooms)
-        client_info[client_socket] = ["Unnamed user", []]
+        client_info[client_socket] = ["unnamed", []]
 
         # start a thread that listens for the client's messages
         t = Thread(target=listen_for_client, args=(client_socket,))
@@ -443,9 +443,6 @@ def listen_for_new_clients():
         # start the thread
         t.start()
 
-    # add the new client's socket to list of connected clients
-    # no name, empty list (since in no rooms)
-    client_info[client_socket] = ["unnamed", []]
 
 t_new_clients = Thread(target=listen_for_new_clients,)
 t_new_clients.daemon = True

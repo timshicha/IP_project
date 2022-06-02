@@ -256,7 +256,7 @@ def send(sender_socket, message):
             safe_send(sender_socket, to_send)
         # otherwise broadcast the message
         else:
-            to_send = f"{OPCODE_SEND_MESSAGE}{sep}{message}"
+            to_send = f"{OPCODE_SEND_MESSAGE}{sep}[user={client_info[sender_socket][0]} room={room_name} time={message}"
             for i in room_info[room_name]:
                 safe_send(i, to_send)
 
@@ -433,7 +433,7 @@ while True:
 
     # add the new client's socket to list of connected clients
     # no name, empty list (since in no rooms)
-    client_info[client_socket] = ["Unnamed user", []]
+    client_info[client_socket] = ["unnamed", []]
 
     # start a thread that listens for the client's messages
     t = Thread(target=listen_for_client, args=(client_socket,))
